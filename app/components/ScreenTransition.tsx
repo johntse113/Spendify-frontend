@@ -1,4 +1,3 @@
-// not used yet, but may be for screen transitions
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
