@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { COLORS } from '../../../constant';
+import { COLORS } from '../../constant';
 
 export default function UploadReceiptScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);

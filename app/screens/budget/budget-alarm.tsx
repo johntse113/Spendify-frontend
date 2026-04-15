@@ -10,7 +10,7 @@ import { Text, Card, TextInput, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Slider from '@react-native-community/slider';
 import { ArrowLeft, Save } from 'lucide-react-native';
-import { COLORS, FONTS } from '../../../constant';
+import { COLORS, FONTS } from '../../constant';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { 
@@ -18,7 +18,7 @@ import {
   MIN_BUDGET, 
   MAX_BUDGET, 
   BUDGET_STEP 
-} from '../../../constant';
+} from '../../constant';
 
 const { width } = Dimensions.get('window');
 

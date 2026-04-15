@@ -22,10 +22,10 @@ import * as yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import { COLORS, FONTS } from '../../../constant';
-import { API_CONFIG, getFullUrl } from '../../../config/api';
+import { COLORS, FONTS } from '../../constant';
+import { API_CONFIG, getFullUrl } from '../../config/api';
 import { useRouter } from 'expo-router';
-import TransactionFormFields from '../../../components/TransactionForm';
+import TransactionFormFields from '../../components/TransactionForm';
 
 const { width } = Dimensions.get('window');
 
