@@ -48,5 +48,8 @@
     "victory-native": "^41.20.2",
     "yup": "^1.7.1"
   },
+  "overrides": {
+    "react-dom": "npm:empty@0.0.0"
+  },
   "private": true
 }
