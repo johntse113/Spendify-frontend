@@ -12,38 +12,31 @@ import Slider from '@react-native-community/slider';
 import { ArrowLeft, Save } from 'lucide-react-native';
 import { COLORS, FONTS } from '../../constant';
 import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { 
-  BUDGET_STORAGE_KEY, 
-  MIN_BUDGET, 
-  MAX_BUDGET, 
-  BUDGET_STEP 
-} from '../../constant';
+import { makeAuthenticatedRequest, API_CONFIG } from '../../config/api';
+import { MIN_BUDGET, MAX_BUDGET, BUDGET_STEP } from '../../constant/budget';
 
 const { width } = Dimensions.get('window');
 
 export default function SetBudgetScreen() {
   const [budget, setBudget] = useState('2000');
   const [sliderValue, setSliderValue] = useState(2000);
+  const [budgetId, setBudgetId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    loadSavedBudget();
+    loadBudget();
   }, []);
 
-  const loadSavedBudget = async () => {
+  const loadBudget = async () => {
     try {
-      const savedBudget = await AsyncStorage.getItem(BUDGET_STORAGE_KEY);
-      if (savedBudget) {
-        const budgetNum = parseInt(savedBudget, 10);
-        if (!isNaN(budgetNum)) {
-          setBudget(budgetNum.toString());
-          setSliderValue(budgetNum);
-        }
-      }
+      const budgetData = await makeAuthenticatedRequest('get', API_CONFIG.endpoints.budget.currentMonth);
+      setBudget(budgetData.limit.toString());
+      setSliderValue(budgetData.limit);
+      setBudgetId(budgetData.id.toString());
     } catch (error) {
-      console.error('Error loading budget:', error);
+      // No existing budget, keep default
+      console.log('No existing budget found for current month');
     }
   };
 
@@ -97,7 +90,16 @@ export default function SetBudgetScreen() {
 
     setIsSaving(true);
     try {
-      await AsyncStorage.setItem(BUDGET_STORAGE_KEY, budgetNum.toString());
+      if (budgetId) {
+        // Update existing budget
+        await makeAuthenticatedRequest('put', `${API_CONFIG.endpoints.budget.base}/${budgetId}`, { limit: budgetNum });
+      } else {
+        // Create new budget
+        const now = new Date();
+        const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const response = await makeAuthenticatedRequest('post', API_CONFIG.endpoints.budget.base, { limit: budgetNum, yearMonth });
+        setBudgetId(response.id.toString());
+      }
       setIsSaving(false);
       router.back();
     } catch (error) {

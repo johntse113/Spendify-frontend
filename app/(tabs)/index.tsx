@@ -23,12 +23,10 @@ import { COLORS, FONTS } from '../constant';
 import { router, useFocusEffect } from 'expo-router';
 import AppIcon from '../../assets/images/icon.png';
 import Svg, { Path } from 'react-native-svg';
+import { makeAuthenticatedRequest, API_CONFIG } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { useUser } from '../hooks/useUser';
 import { useMonthlySpending } from '../hooks/useMonthlySpending';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BUDGET_STORAGE_KEY } from '../constant';
-
 const { width } = Dimensions.get('window');
 
 interface ActionCardProps {
@@ -60,21 +58,17 @@ export default function Home() {
 
   useFocusEffect(
     React.useCallback(() => {
-      loadBudgetFromStorage();
+      loadBudget();
     }, [])
   );
 
-  const loadBudgetFromStorage = async () => {
+  const loadBudget = async () => {
     try {
-      const savedBudget = await AsyncStorage.getItem(BUDGET_STORAGE_KEY);
-      if (savedBudget) {
-        const budgetNum = parseInt(savedBudget, 10);
-        if (!isNaN(budgetNum)) {
-          setMonthlyBudget(budgetNum);
-        }
-      }
+      const budgetData = await makeAuthenticatedRequest('get', API_CONFIG.endpoints.budget.currentMonth);
+      setMonthlyBudget(budgetData.limit);
     } catch (error) {
       console.error('Error loading budget:', error);
+      setMonthlyBudget(2000); // Fallback to default
     }
   };
 
