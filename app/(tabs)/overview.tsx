@@ -24,6 +24,7 @@ import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { format, subMonths } from 'date-fns';
 import { API_CONFIG, getFullUrl } from '../config/api';
 import { COLORS, FONTS } from '../constant';
+import { useSettings } from '../context/SettingsContext';
 import { useMonthlySpending } from '../hooks/useMonthlySpending';
 
 const ROBOTO_MONO_BOLD = require('../../assets/fonts/Roboto_Mono/static/RobotoMono-Bold.ttf');
@@ -64,6 +65,7 @@ export default function Overview() {
   const [dateRange, setDateRange] = useState<string>('');
 
   const { monthlySpending, loading: monthlyLoading } = useMonthlySpending();
+  const { formatCurrency } = useSettings();
 
   const fontForChart = useFont(ROBOTO_MONO_REGULAR, 9);
   const fontForPie = useFont(ROBOTO_MONO_BOLD, 14);
@@ -178,15 +180,6 @@ export default function Overview() {
       .sort((a, b) => b.total - a.total);
 
     setCategoryData(categoryArray);
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'HKD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
   };
 
   const robotoBold = FONTS.primaryBold.family;

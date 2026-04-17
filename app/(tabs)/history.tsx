@@ -16,6 +16,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { format, subDays, parseISO, isAfter, isBefore } from 'date-fns';
 import { COLORS, FONTS } from '../constant';
+import { useSettings } from '../context/SettingsContext';
 import { API_CONFIG, getFullUrl } from '../config/api';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -92,6 +93,8 @@ export default function History() {
   const [editFormDataToSubmit, setEditFormDataToSubmit] = useState<(TransactionFormData & { id: number }) | null>(null);
   const [editLoading, setEditLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const { formatCurrency } = useSettings();
 
   const { control: editControl, handleSubmit: editHandleSubmit, formState: { errors: editErrors }, reset: editReset, setValue: setEditValue } = useForm<TransactionFormData>({
     resolver: yupResolver(transactionSchema),
@@ -267,15 +270,6 @@ export default function History() {
         useNativeDriver: false,
       }).start();
     }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'HKD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
