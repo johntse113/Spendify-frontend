@@ -12,6 +12,7 @@ import {
 } from 'lucide-react-native';
 import { COLORS } from '../constant';
 import { useAuth } from '../context/AuthContext';
+import { router } from 'expo-router';
 
 interface MenuItemProps {
   icon: React.ElementType;
@@ -75,13 +76,13 @@ export default function MenuScreen() {
           <MenuItem 
             icon={User} 
             title="Profile" 
-            onPress={() => {}} 
+            onPress={() => {router.push('/screens/profile')}} 
             disabled={loggingOut}
           />
           <MenuItem 
             icon={Bell} 
             title="Notifications" 
-            onPress={() => {}} 
+            onPress={() => {router.push('/screens/notifications/notifications')}} 
             disabled={loggingOut}
           />
         </View>
@@ -91,7 +92,7 @@ export default function MenuScreen() {
           <MenuItem 
             icon={Settings} 
             title="App Settings" 
-            onPress={() => {}} 
+            onPress={() => {router.push('/screens/settings')}} 
             disabled={loggingOut}
           />
         </View>
@@ -101,13 +102,13 @@ export default function MenuScreen() {
           <MenuItem 
             icon={FileText} 
             title="Terms & Privacy" 
-            onPress={() => {}} 
+            onPress={() => {router.push('/screens/terms')}} 
             disabled={loggingOut}
           />
           <MenuItem 
             icon={HelpCircle} 
             title="Help & Support" 
-            onPress={() => {}} 
+            onPress={() => {router.push('/screens/help')}} 
             disabled={loggingOut}
           />
         </View>
