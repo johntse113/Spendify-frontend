@@ -36,6 +36,12 @@ interface ActionCardProps {
   onPress?: () => void;
 }
 
+interface BudgetData {
+  id: number;
+  limit: number;
+  yearMonth: string;
+}
+
 const ActionCard = ({ title, icon: Icon, color, onPress }: ActionCardProps) => (
   <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.gridCardTouchable}>
     <Card style={styles.gridCard} mode="outlined">
@@ -64,7 +70,8 @@ export default function Home() {
 
   const loadBudget = async () => {
     try {
-      const budgetData = await makeAuthenticatedRequest('get', API_CONFIG.endpoints.budget.currentMonth);
+      // the type doesnt capture all the fields but we only care about limit here so its fine
+      const budgetData: BudgetData = await makeAuthenticatedRequest('get', API_CONFIG.endpoints.budget.currentMonth);
       setMonthlyBudget(budgetData.limit);
     } catch (error) {
       console.error('Error loading budget:', error);
