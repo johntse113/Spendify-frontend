@@ -117,7 +117,7 @@ export default function Home() {
   );
 
   const handleNotificationPress = () => {
-    router.push('/screens/notifications');
+    router.push('/screens/notifications/notifications');
   };
 
   const handleInputNewRecord = () => {
