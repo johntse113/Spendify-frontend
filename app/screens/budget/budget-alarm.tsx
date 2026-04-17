@@ -17,6 +17,12 @@ import { MIN_BUDGET, MAX_BUDGET, BUDGET_STEP } from '../../constant/budget';
 
 const { width } = Dimensions.get('window');
 
+interface BudgetData {
+  id: number;
+  limit: number;
+  yearMonth: string;
+}
+
 export default function SetBudgetScreen() {
   const [budget, setBudget] = useState('2000');
   const [sliderValue, setSliderValue] = useState(2000);
@@ -30,7 +36,8 @@ export default function SetBudgetScreen() {
 
   const loadBudget = async () => {
     try {
-      const budgetData = await makeAuthenticatedRequest('get', API_CONFIG.endpoints.budget.currentMonth);
+
+      const budgetData: BudgetData = await makeAuthenticatedRequest('get', API_CONFIG.endpoints.budget.currentMonth);
       setBudget(budgetData.limit.toString());
       setSliderValue(budgetData.limit);
       setBudgetId(budgetData.id.toString());
@@ -97,7 +104,8 @@ export default function SetBudgetScreen() {
         // Create new budget
         const now = new Date();
         const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-        const response = await makeAuthenticatedRequest('post', API_CONFIG.endpoints.budget.base, { limit: budgetNum, yearMonth });
+        // the type doesnt capture all the fields but we only care about id here so its fine
+        const response: BudgetData = await makeAuthenticatedRequest('post', API_CONFIG.endpoints.budget.base, { limit: budgetNum, yearMonth });
         setBudgetId(response.id.toString());
       }
       setIsSaving(false);
