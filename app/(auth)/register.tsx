@@ -21,7 +21,7 @@ import { COLORS, FONTS } from '../constant';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useUser } from '../hooks/useUser';
-import { API_CONFIG, getFullUrl } from '../config/api';
+import { makeAuthenticatedRequest, API_CONFIG, getFullUrl } from '../config/api';
 import AppIcon from '../../assets/images/icon.png';
 import Svg, { Path } from 'react-native-svg';
 import { TERMS_AND_CONDITIONS } from '../constant/text';
@@ -81,6 +81,7 @@ export default function Register() {
           },
         }
       );
+      
       
       const userData = userResponse.data;
       console.log('User profile data after registration:', userData);

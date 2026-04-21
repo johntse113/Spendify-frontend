@@ -239,19 +239,19 @@ const styles = StyleSheet.create({
   },
 
   iconPlaceholder: {
-    height: 24, // ✅ same height as normal icons
+    height: 24,
   },
 
   scanTabContainer: {
     height: 78,
     alignItems: "center",
     justifyContent: "center",
-    position: "relative", // anchor absolute children
+    position: "relative",
   },
 
   scanFloatingIcon: {
     position: "absolute",
-    top: -32, // ✅ overflow upward
+    top: -32,
     width: 64,
     height: 64,
     borderRadius: 32,

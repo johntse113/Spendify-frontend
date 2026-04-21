@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,10 +7,12 @@ import {
   Animated,
   TouchableOpacity,
   Image,
+  RefreshControl,
 } from 'react-native';
 import { Text, Card, IconButton } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Progress from 'react-native-progress';
+import axios from 'axios';
 import {
   Wallet,
   Pencil,
@@ -23,7 +25,7 @@ import { COLORS, FONTS } from '../constant';
 import { router, useFocusEffect } from 'expo-router';
 import AppIcon from '../../assets/images/icon.png';
 import Svg, { Path } from 'react-native-svg';
-import { makeAuthenticatedRequest, API_CONFIG } from '../config/api';
+import { makeAuthenticatedRequest, API_CONFIG, getFullUrl } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { useUser } from '../hooks/useUser';
 import { useMonthlySpending } from '../hooks/useMonthlySpending';
@@ -57,10 +59,12 @@ export default function Home() {
   const progressAnim = useRef(new Animated.Value(0)).current;
   const [animatedProgress, setAnimatedProgress] = React.useState(0);
   const [monthlyBudget, setMonthlyBudget] = React.useState(2000);
+  const [budgetError, setBudgetError] = React.useState<string | null>(null);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const { token } = useAuth();
   const { userEmail } = useUser();
-  const { monthlySpending, loading: spendingLoading } = useMonthlySpending();
+  const { monthlySpending, loading: spendingLoading, refresh: refreshSpending } = useMonthlySpending();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -70,15 +74,35 @@ export default function Home() {
 
   const loadBudget = async () => {
     try {
-      // the type doesnt capture all the fields but we only care about limit here so its fine
       const budgetData: BudgetData = await makeAuthenticatedRequest('get', API_CONFIG.endpoints.budget.currentMonth);
       setMonthlyBudget(budgetData.limit);
-    } catch (error) {
+      setBudgetError(null);
+    } catch (error: any) {
       console.error('Error loading budget:', error);
-      setMonthlyBudget(2000); // Fallback to default
+      if (error.response?.status === 403 && token) {
+        setBudgetError('Please set your budget limit for current month.');
+        setMonthlyBudget(2000);
+      } else {
+        setBudgetError(null);
+        setMonthlyBudget(2000);
+      }
     }
   };
 
+
+  const handleRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        loadBudget(),
+        refreshSpending ? refreshSpending() : Promise.resolve()
+      ]);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadBudget, refreshSpending]);
 
   const progress = monthlyBudget > 0 ? monthlySpending / monthlyBudget : 0;
   const displayProgress = Math.min(progress, 1);
@@ -111,7 +135,7 @@ export default function Home() {
       }).start();
       
       return () => {
-        // Cleanup
+        // cleanup
       };
     }, [displayProgress])
   );
@@ -174,7 +198,18 @@ export default function Home() {
         </SafeAreaView>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
+            titleColor={COLORS.text.secondary}
+          />
+        }
+      >
         <Text style={styles.greeting}>Hi, {userEmail || 'User'}</Text>
 
         <Card style={styles.progressCard} mode="outlined">
@@ -214,6 +249,12 @@ export default function Home() {
             </View>
           </View>
         </Card>
+
+        {budgetError && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{budgetError}</Text>
+          </View>
+        )}
 
         <View style={styles.grid}>
           <ActionCard
@@ -408,5 +449,19 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.secondary.family,
     color: COLORS.text.primary,
     marginRight: 5,
+  },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#FECACA',
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: 14,
+    fontFamily: FONTS.secondary.family,
+    textAlign: 'center',
   },
 });

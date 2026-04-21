@@ -42,7 +42,6 @@ export default function SetBudgetScreen() {
       setSliderValue(budgetData.limit);
       setBudgetId(budgetData.id.toString());
     } catch (error) {
-      // No existing budget, keep default
       console.log('No existing budget found for current month');
     }
   };
@@ -98,14 +97,12 @@ export default function SetBudgetScreen() {
     setIsSaving(true);
     try {
       if (budgetId) {
-        // Update existing budget
-        await makeAuthenticatedRequest('put', `${API_CONFIG.endpoints.budget.base}/${budgetId}`, { limit: budgetNum });
+        await makeAuthenticatedRequest('put', `${API_CONFIG.endpoints.budget.base}/${budgetId}`, { "limit": budgetNum });
       } else {
-        // Create new budget
         const now = new Date();
         const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
         // the type doesnt capture all the fields but we only care about id here so its fine
-        const response: BudgetData = await makeAuthenticatedRequest('post', API_CONFIG.endpoints.budget.base, { limit: budgetNum, yearMonth });
+        const response: BudgetData = await makeAuthenticatedRequest('post', `${API_CONFIG.endpoints.budget.base}`, { "limit": budgetNum, "yearMonth": yearMonth });
         setBudgetId(response.id.toString());
       }
       setIsSaving(false);

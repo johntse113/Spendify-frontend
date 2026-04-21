@@ -3,16 +3,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CurrencyCode } from '../constant';
 
 interface SettingsState {
-  // Display & Appearance
+  // display appearance
   theme: 'light' | 'dark';
   currency: CurrencyCode;
   dateFormat: 'DD/MM/YYYY' | 'MM/DD/YYYY';
 
-  // Data & Privacy
+  // data privacy
   autoLogoutTimeout: number; // in minutes
   biometricEnabled: boolean;
 
-  // Notifications
+  // notifications
   notificationsEnabled: boolean;
 }
 

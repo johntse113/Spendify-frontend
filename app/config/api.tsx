@@ -21,7 +21,7 @@ export default apiBaseUrl;
 
 export const API_CONFIG = {
   getBaseUrl: (): string => {
-    const apiBaseUrl = `http://192.168.50.14:8080`; //`https://api.spendify.hk`;
+    const apiBaseUrl = `https://fyp25073.maulei41.com`//`http://192.168.50.14:8080`; //`https://api.spendify.hk`;
     return apiBaseUrl;
   },
   
@@ -32,6 +32,10 @@ export const API_CONFIG = {
       logout: '/auth/logout',
       refresh: '/auth/refresh',
       me: '/auth/me',
+    },
+    budget: {
+      base: '/budget',
+      currentMonth: '/budget/current-month',
     },
     categories: '/categories',
     transactions: '/transactions',
@@ -79,7 +83,7 @@ export const makeAuthenticatedRequest = async <T,>(
 ): Promise<T> => {
   const headers = await API_CONFIG.getHeaders();
   const url = getFullUrl(endpoint);
-  
+  console.log(`Making ${method.toUpperCase()} request to ${url} with data:`, data, 'and headers:', headers);
   const response = await axios({
     method,
     url,

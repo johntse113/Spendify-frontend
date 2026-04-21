@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Alert, StyleSheet } from 'react-native';
+import { View, ScrollView, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card, Text, Switch, TouchableRipple, Button, Dialog, Portal, RadioButton, List } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChevronRight, Bell, Palette, DollarSign, Calendar, Shield, Download, Lock, Trash2 } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Bell, Palette, DollarSign, Calendar, Shield, Download, Lock, Trash2 } from 'lucide-react-native';
 
 import { COLORS, FONTS, CURRENCIES } from '../../constant';
 import { useSettings } from '../../context/SettingsContext';
@@ -81,14 +81,14 @@ export default function Settings() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { fontFamily: FONTS.primaryBold.family, color: COLORS.text.primary }]}>
-            Settings
-          </Text>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <ChevronLeft color={COLORS.text.primary} size={24} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Settings</Text>
+          <View style={styles.headerPlaceholder} />
         </View>
 
-        {/* Notifications */}
         <Card style={styles.card}>
           <Card.Content>
             <View style={styles.sectionHeader}>
@@ -112,7 +112,6 @@ export default function Settings() {
           </Card.Content>
         </Card>
 
-        {/* Display & Appearance */}
         <Card style={styles.card}>
           <Card.Content>
             <View style={styles.sectionHeader}>
@@ -158,7 +157,6 @@ export default function Settings() {
           </Card.Content>
         </Card>
 
-        {/* Data & Privacy */}
         <Card style={styles.card}>
           <Card.Content>
             <View style={styles.sectionHeader}>
@@ -171,12 +169,15 @@ export default function Settings() {
             <TouchableRipple onPress={() => setShowLogoutTimeoutDialog(true)}>
               <View style={styles.settingRow}>
                 <View style={styles.settingLeft}>
-                  <Text style={[styles.settingLabel, { fontFamily: FONTS.secondary.family }]}>
-                    Auto-logout Timeout
-                  </Text>
-                  <Text style={[styles.settingValue, { fontFamily: FONTS.secondary.family, color: COLORS.text.secondary }]}>
-                    {getLogoutTimeoutLabel(settings.autoLogoutTimeout)}
-                  </Text>
+                  <Lock size={18} color={COLORS.text.secondary} />
+                  <View style={styles.settingText}>
+                    <Text style={[styles.settingLabel, { fontFamily: FONTS.secondary.family }]}>
+                      Auto-logout Timeout
+                    </Text>
+                    <Text style={[styles.settingValue, { fontFamily: FONTS.secondary.family, color: COLORS.text.secondary }]}>
+                      {getLogoutTimeoutLabel(settings.autoLogoutTimeout)}
+                    </Text>
+                  </View>
                 </View>
                 <ChevronRight size={18} color={COLORS.text.secondary} />
               </View>
@@ -199,9 +200,11 @@ export default function Settings() {
               <View style={styles.settingRow}>
                 <View style={styles.settingLeft}>
                   <Download size={18} color={COLORS.text.secondary} />
-                  <Text style={[styles.settingLabel, { fontFamily: FONTS.secondary.family }]}>
-                    Export Data
-                  </Text>
+                  <View style={styles.settingText}>
+                    <Text style={[styles.settingLabel, { fontFamily: FONTS.secondary.family }]}>
+                      Export Data
+                    </Text>
+                  </View>
                 </View>
                 <ChevronRight size={18} color={COLORS.text.secondary} />
               </View>
@@ -209,7 +212,6 @@ export default function Settings() {
           </Card.Content>
         </Card>
 
-        {/* Account Actions */}
         <Card style={styles.card}>
           <Card.Content>
             <View style={styles.sectionHeader}>
@@ -242,7 +244,6 @@ export default function Settings() {
           </Card.Content>
         </Card>
 
-        {/* Currency Selection Dialog */}
         <Portal>
           <Dialog visible={showCurrencyDialog} onDismiss={() => setShowCurrencyDialog(false)}>
             <Dialog.Title>Select Currency</Dialog.Title>
@@ -263,7 +264,6 @@ export default function Settings() {
           </Dialog>
         </Portal>
 
-        {/* Date Format Selection Dialog */}
         <Portal>
           <Dialog visible={showDateFormatDialog} onDismiss={() => setShowDateFormatDialog(false)}>
             <Dialog.Title>Select Date Format</Dialog.Title>
@@ -290,7 +290,6 @@ export default function Settings() {
           </Dialog>
         </Portal>
 
-        {/* Logout Timeout Selection Dialog */}
         <Portal>
           <Dialog visible={showLogoutTimeoutDialog} onDismiss={() => setShowLogoutTimeoutDialog(false)}>
             <Dialog.Title>Auto-logout Timeout</Dialog.Title>
@@ -328,13 +327,22 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 20,
     paddingTop: 10,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1a237e',
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 24,
+    color: COLORS.text.primary,
+    fontFamily: FONTS.primaryBold.family,
+  },
+  headerPlaceholder: {
+    width: 32,
   },
   card: {
     marginBottom: 16,

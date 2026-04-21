@@ -17,7 +17,7 @@ import { router } from 'expo-router';
 import { COLORS, FONTS } from '../constant';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { API_CONFIG, getFullUrl } from '../config/api';
+import { makeAuthenticatedRequest, API_CONFIG, getFullUrl } from '../config/api';
 import AppIcon from '../../assets/images/icon.png';
 import Svg, { Path } from 'react-native-svg';
 
@@ -84,6 +84,7 @@ export default function Login() {
       //debug
       console.log('User profile data:', userData);
       console.log('User token:', token);
+      
       
       await signIn(token, refreshToken, userData);
       router.replace('/(tabs)');

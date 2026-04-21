@@ -11,14 +11,12 @@ export default function TermsAndConditionsScreen() {
   const router = useRouter();
 
   const formatTermsText = (text: string) => {
-    // Split by double newlines to separate sections
     const sections = text.split('\n\n');
 
     return sections.map((section, index) => {
       const lines = section.split('\n');
       const firstLine = lines[0];
 
-      // Check if first line is a numbered section (starts with number)
       if (/^\d+\./.test(firstLine)) {
         return (
           <View key={index} style={styles.section}>
@@ -32,7 +30,6 @@ export default function TermsAndConditionsScreen() {
         );
       }
 
-      // Check if it's a date line
       if (firstLine.includes('Last updated:')) {
         return (
           <Text key={index} style={styles.lastUpdated}>
@@ -41,7 +38,6 @@ export default function TermsAndConditionsScreen() {
         );
       }
 
-      // Regular paragraph
       return (
         <Text key={index} style={styles.paragraph}>
           {section}

@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { COLORS } from './constant';
 import { AuthProvider } from './context/AuthContext';
 import AuthWrapper from './components/AuthWrapper';
+import { SettingsProvider } from './context/SettingsContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,12 +39,14 @@ export default function RootLayout() {
     <AuthProvider>
       <SafeAreaProvider>
         <PaperProvider theme={MD3LightTheme}>
-          <StatusBar style="dark" />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="+not-found" />
-          </Stack>
+          <SettingsProvider>
+            <StatusBar style="dark" />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </SettingsProvider>
         </PaperProvider>
       </SafeAreaProvider>
     </AuthProvider>

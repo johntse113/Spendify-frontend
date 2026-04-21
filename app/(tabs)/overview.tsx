@@ -64,7 +64,7 @@ export default function Overview() {
   const [totalSpending, setTotalSpending] = useState(0);
   const [dateRange, setDateRange] = useState<string>('');
 
-  const { monthlySpending, loading: monthlyLoading } = useMonthlySpending();
+  const { monthlySpending, loading: monthlyLoading, refresh: refreshMonthlySpending } = useMonthlySpending();
   const { formatCurrency } = useSettings();
 
   const fontForChart = useFont(ROBOTO_MONO_REGULAR, 9);
@@ -116,7 +116,10 @@ export default function Overview() {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    Promise.all([loadOverviewData()]).finally(() => setRefreshing(false));
+    Promise.all([
+      loadOverviewData().catch(error => console.error('Error refreshing overview:', error)),
+      refreshMonthlySpending().catch(error => console.error('Error refreshing monthly spending:', error))
+    ]).finally(() => setRefreshing(false));
   };
 
   const calculateMonthlyData = (transactions: Transaction[]) => {

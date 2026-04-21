@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator } from 'react-native-paper';
 import { API_CONFIG, makeAuthenticatedRequest } from '../../config/api';
 import { COLORS, FONTS } from '../../constant';
+import { ChevronLeft } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+
 
 export default function ProfileScreen() {
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
+  
   useEffect(() => {
     const loadProfile = async () => {
       setLoading(true);
@@ -33,7 +37,13 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Profile</Text>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <ChevronLeft color={COLORS.text.primary} size={24} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <View style={styles.headerPlaceholder} />
+        </View>
 
         <View style={styles.card}>
           <Text style={styles.cardLabel}>Email</Text>
@@ -63,6 +73,24 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.primaryBold.family,
     color: COLORS.text.primary,
     marginBottom: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    paddingTop: 10,
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 24,
+    color: COLORS.text.primary,
+    fontFamily: FONTS.primaryBold.family,
+  },
+  headerPlaceholder: {
+    width: 32,
   },
   card: {
     backgroundColor: 'white',
